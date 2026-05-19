@@ -44,12 +44,17 @@ export async function GET(request) {
         fontFamily: 'sans-serif',
       }}
     >
+<img
+  src="https://og-generator-puce.vercel.app/bg.png"
+  width="1200"
+  height="630"
+  style={{
+    position: 'absolute',
+    top: 0,
+    left: 0,
+  }}
+/>
 
-
-
-
-      
-      
         {/* LOGO */}
         <div
           style={{
