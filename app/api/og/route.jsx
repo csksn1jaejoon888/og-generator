@@ -9,101 +9,92 @@ export async function GET(request) {
   const tagsRaw = searchParams.get('tags')    || '';
   const tags    = tagsRaw ? tagsRaw.split(',').slice(0, 5) : [];
 
+  // Summary max 18 kata
   const words = summary.replace(/<[^>]*>/g, '').split(' ');
   const shortSum = words.slice(0, 18).join(' ') + (words.length > 18 ? '...' : '');
 
+  // Judul max 2 baris ~45 karakter
   const titleWords = title.split(' ');
   let line1 = '', line2 = '';
   for (const w of titleWords) {
-    if ((line1 + ' ' + w).trim().length <= 50) {
+    if ((line1 + ' ' + w).trim().length <= 45) {
       line1 = (line1 + ' ' + w).trim();
-    } else if ((line2 + ' ' + w).trim().length <= 50) {
+    } else if ((line2 + ' ' + w).trim().length <= 45) {
       line2 = (line2 + ' ' + w).trim();
     } else break;
   }
+
+  // Fetch background dari GitHub
+  const bgUrl = 'https://raw.githubusercontent.com/csksn1jaejoon888/og-generator/main/bg.png';
+  const bgRes  = await fetch(bgUrl);
+  const bgBuf  = await bgRes.arrayBuffer();
+  const bgB64  = Buffer.from(bgBuf).toString('base64');
+  const bgSrc  = `data:image/png;base64,${bgB64}`;
 
   return new ImageResponse(
     (
       <div style={{
         width: 1200, height: 630,
-        display: 'flex', flexDirection: 'column',
-        background: '#1a1a1a',
-        border: '4px solid #98FB98',
+        display: 'flex',
+        position: 'relative',
         fontFamily: 'sans-serif',
         overflow: 'hidden',
       }}>
 
-        {/* MAIN CONTENT AREA */}
+        {/* Background statis */}
+        <img src={bgSrc} style={{
+          position: 'absolute',
+          top: 0, left: 0,
+          width: 1200, height: 630,
+        }}/>
+
+        {/* Teks dinamis — posisi disesuaikan dengan background */}
         <div style={{
-          flex: 1,
-          display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center',
-          padding: '30px 60px 20px 60px',
-          background: '#1e1e1e',
-          margin: '30px 40px 0px 40px',
-          borderRadius: '10px 10px 0 0',
-          borderTop: '4px solid #98FB98',
+          position: 'absolute',
+          top: 255,        // mulai di bawah logo TREND4GENZ
+          left: 275,       // sejajar dengan teks di background
+          width: 730,      // lebar area konten
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 0,
         }}>
 
-          {/* BRAND */}
+          {/* Judul baris 1 */}
           <div style={{
-            display: 'flex', flexDirection: 'column',
-            alignItems: 'center', marginBottom: 28,
+            fontSize: 26, fontWeight: 700,
+            color: '#e8e8e8', display: 'flex',
+            marginBottom: 4,
           }}>
-            <div style={{
-              fontSize: 52, fontWeight: 900, color: '#98FB98',
-              letterSpacing: 10, display: 'flex',
-            }}>
-              TREND4GENZ
-            </div>
-            <div style={{
-              width: 380, height: 3,
-              background: '#98FB98',
-              marginTop: 8, display: 'flex',
-            }}/>
+            {line1}
           </div>
 
-          {/* VIDEO TITLE */}
-          <div style={{
-            display: 'flex', flexDirection: 'column',
-            alignSelf: 'flex-start', width: '100%',
-            marginBottom: 20,
-          }}>
+          {/* Judul baris 2 */}
+          {line2 ? (
             <div style={{
-              fontSize: 32, fontWeight: 700, color: '#f0f0f0',
-              display: 'flex',
+              fontSize: 26, fontWeight: 700,
+              color: '#e8e8e8', display: 'flex',
+              marginBottom: 4,
             }}>
-              {line1}
+              {line2}
             </div>
-            {line2 ? (
-              <div style={{
-                fontSize: 32, fontWeight: 700, color: '#f0f0f0',
-                marginTop: 6, display: 'flex',
-              }}>
-                {line2}
-              </div>
-            ) : null}
-          </div>
+          ) : null}
 
-          {/* TAGS */}
+          {/* TAG pills */}
           <div style={{
             display: 'flex', flexDirection: 'row',
-            alignItems: 'center',
-            alignSelf: 'flex-start',
-            gap: 10, marginBottom: 18,
+            alignItems: 'center', gap: 6,
+            marginTop: 10, marginBottom: 10,
           }}>
             <span style={{
-              fontSize: 12, color: '#666',
-              letterSpacing: 3, marginRight: 4,
-              display: 'flex',
-            }}>
-              TAG :
-            </span>
+              fontSize: 11, color: '#666',
+              letterSpacing: 2, display: 'flex',
+              marginRight: 2,
+            }}>TAG :</span>
             {tags.map((tag, i) => (
               <div key={i} style={{
-                border: '1.5px solid #98FB98',
-                borderRadius: 14, padding: '4px 16px',
-                fontSize: 13, color: '#98FB98',
+                border: '1px solid #5aad5a',
+                borderRadius: 12, padding: '2px 12px',
+                fontSize: 11, color: '#7acc7a',
                 display: 'flex',
               }}>
                 {tag.trim().toUpperCase()}
@@ -111,57 +102,14 @@ export async function GET(request) {
             ))}
           </div>
 
-          {/* SUMMARY */}
+          {/* Summary */}
           <div style={{
-            fontSize: 17, color: '#aaaaaa',
-            alignSelf: 'flex-start',
-            display: 'flex',
+            fontSize: 14, color: '#999999',
+            display: 'flex', lineHeight: 1.4,
           }}>
             {shortSum}
           </div>
 
-          {/* WATCH NOW - align right */}
-          <div style={{
-            display: 'flex', width: '100%',
-            justifyContent: 'flex-end',
-            marginTop: 24,
-          }}>
-            <div style={{
-              border: '2px solid #98FB98',
-              borderRadius: 26, padding: '12px 32px',
-              fontSize: 15, fontWeight: 700,
-              color: '#98FB98', letterSpacing: 1.5,
-              display: 'flex', alignItems: 'center', gap: 8,
-            }}>
-              ▶  WATCH NOW
-            </div>
-          </div>
-
-        </div>
-
-        {/* BOTTOM BAR */}
-        <div style={{
-          height: 66, width: '100%',
-          background: '#0f0f0f',
-          borderTop: '2px solid #98FB98',
-          display: 'flex', alignItems: 'center',
-          paddingLeft: 50,
-        }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-            <span style={{
-              fontSize: 18, fontWeight: 900,
-              color: '#f0f0f0', letterSpacing: 1,
-              display: 'flex',
-            }}>
-              TREND4GENZ.FUN
-            </span>
-            <span style={{
-              fontSize: 12, color: '#666',
-              display: 'flex',
-            }}>
-              Free Streaming Video
-            </span>
-          </div>
         </div>
 
       </div>
