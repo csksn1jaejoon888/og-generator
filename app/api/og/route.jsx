@@ -2,118 +2,212 @@ import { ImageResponse } from '@vercel/og';
 
 export const runtime = 'edge';
 
+const robotoBold = fetch(
+  new URL('./Roboto-Bold.ttf', import.meta.url)
+).then((res) => res.arrayBuffer());
+
+const robotoBlack = fetch(
+  new URL('./Roboto-Black.ttf', import.meta.url)
+).then((res) => res.arrayBuffer());
+
 export async function GET(request) {
+
   const { searchParams } = new URL(request.url);
-  const title   = searchParams.get('title')   || 'Trend4GenZ';
-  const summary = searchParams.get('summary') || 'Streaming Video Trending';
-  const tagsRaw = searchParams.get('tags')    || '';
-  const tags    = tagsRaw ? tagsRaw.split(',').slice(0, 5) : [];
 
-  // Summary max 18 kata
-  const words = summary.replace(/<[^>]*>/g, '').split(' ');
-  const shortSum = words.slice(0, 18).join(' ') + (words.length > 18 ? '...' : '');
+  const title =
+    searchParams.get('title') || 'TREND4GENZ';
 
-  // Judul max 2 baris ~45 karakter
-  const titleWords = title.split(' ');
-  let line1 = '', line2 = '';
-  for (const w of titleWords) {
-    if ((line1 + ' ' + w).trim().length <= 45) {
-      line1 = (line1 + ' ' + w).trim();
-    } else if ((line2 + ' ' + w).trim().length <= 45) {
-      line2 = (line2 + ' ' + w).trim();
-    } else break;
+  const summary =
+    searchParams.get('summary') ||
+    'Streaming Trending Video';
+
+  const tagsRaw =
+    searchParams.get('tags') || '';
+
+  const tags = tagsRaw
+    ? tagsRaw.split(',').slice(0, 4)
+    : [];
+
+  // SUMMARY LIMIT
+  const cleanSummary = summary.replace(/<[^>]*>/g, '');
+
+  const summaryWords = cleanSummary.split(/\s+/);
+
+  const shortSummary =
+    summaryWords.slice(0, 22).join(' ') +
+    (summaryWords.length > 22 ? '...' : '');
+
+  // TITLE SPLIT
+  const words = title.split(' ');
+
+  let line1 = '';
+  let line2 = '';
+
+  for (const word of words) {
+
+    if ((line1 + ' ' + word).trim().length <= 34) {
+
+      line1 = (line1 + ' ' + word).trim();
+
+    } else {
+
+      line2 = (line2 + ' ' + word).trim();
+
+    }
   }
 
-  // Fetch background dari GitHub
-  const bgUrl = 'https://raw.githubusercontent.com/csksn1jaejoon888/og-generator/main/bg.png';
-  const bgRes  = await fetch(bgUrl);
-  const bgBuf  = await bgRes.arrayBuffer();
-  const bgB64  = Buffer.from(bgBuf).toString('base64');
-  const bgSrc  = `data:image/png;base64,${bgB64}`;
-
   return new ImageResponse(
+
     (
-      <div style={{
-        width: 1200, height: 630,
-        display: 'flex',
-        position: 'relative',
-        fontFamily: 'sans-serif',
-        overflow: 'hidden',
-      }}>
-
-        {/* Background statis */}
-        <img src={bgSrc} style={{
-          position: 'absolute',
-          top: 0, left: 0,
-          width: 1200, height: 630,
-        }}/>
-
-        {/* Teks dinamis — posisi disesuaikan dengan background */}
-        <div style={{
-          position: 'absolute',
-          top: 255,        // mulai di bawah logo TREND4GENZ
-          left: 275,       // sejajar dengan teks di background
-          width: 730,      // lebar area konten
+      <div
+        style={{
+          width: '1200px',
+          height: '630px',
           display: 'flex',
-          flexDirection: 'column',
-          gap: 0,
-        }}>
+          position: 'relative',
+          overflow: 'hidden',
+          fontFamily: 'Roboto',
+          backgroundColor: '#000',
+        }}
+      >
 
-          {/* Judul baris 1 */}
-          <div style={{
-            fontSize: 26, fontWeight: 700,
-            color: '#e8e8e8', display: 'flex',
-            marginBottom: 4,
-          }}>
+        {/* BACKGROUND */}
+        <img
+          src={new URL('./bg.png', import.meta.url).toString()}
+          width="1200"
+          height="630"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            objectFit: 'cover',
+          }}
+        />
+
+        {/* DARK OVERLAY */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background:
+              'linear-gradient(to bottom, rgba(0,0,0,0.15), rgba(0,0,0,0.35))',
+          }}
+        />
+
+        {/* CONTENT AREA */}
+        <div
+          style={{
+            position: 'absolute',
+            left: 215,
+            top: 225,
+            width: 760,
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+
+          {/* TITLE */}
+          <div
+            style={{
+              fontSize: 42,
+              fontWeight: 900,
+              color: '#ffffff',
+              lineHeight: 1.1,
+              letterSpacing: '-1px',
+              textShadow: '0 2px 10px rgba(0,0,0,.55)',
+              maxWidth: 760,
+            }}
+          >
             {line1}
           </div>
 
-          {/* Judul baris 2 */}
-          {line2 ? (
-            <div style={{
-              fontSize: 26, fontWeight: 700,
-              color: '#e8e8e8', display: 'flex',
-              marginBottom: 4,
-            }}>
+          {line2 && (
+            <div
+              style={{
+                fontSize: 42,
+                fontWeight: 900,
+                color: '#ffffff',
+                lineHeight: 1.1,
+                letterSpacing: '-1px',
+                marginTop: 4,
+                textShadow: '0 2px 10px rgba(0,0,0,.55)',
+                maxWidth: 760,
+              }}
+            >
               {line2}
             </div>
-          ) : null}
+          )}
 
-          {/* TAG pills */}
-          <div style={{
-            display: 'flex', flexDirection: 'row',
-            alignItems: 'center', gap: 6,
-            marginTop: 10, marginBottom: 10,
-          }}>
-            <span style={{
-              fontSize: 11, color: '#666',
-              letterSpacing: 2, display: 'flex',
-              marginRight: 2,
-            }}>TAG :</span>
-            {tags.map((tag, i) => (
-              <div key={i} style={{
-                border: '1px solid #5aad5a',
-                borderRadius: 12, padding: '2px 12px',
-                fontSize: 11, color: '#7acc7a',
-                display: 'flex',
-              }}>
+          {/* TAGS */}
+          <div
+            style={{
+              display: 'flex',
+              gap: 10,
+              marginTop: 26,
+              flexWrap: 'wrap',
+            }}
+          >
+            {tags.map((tag, index) => (
+              <div
+                key={index}
+                style={{
+                  border: '1.5px solid #98FB98',
+                  borderRadius: 999,
+                  padding: '6px 16px',
+                  color: '#98FB98',
+                  fontSize: 13,
+                  fontWeight: 700,
+                  letterSpacing: 1,
+                  background: 'rgba(0,0,0,0.35)',
+                }}
+              >
                 {tag.trim().toUpperCase()}
               </div>
             ))}
           </div>
 
-          {/* Summary */}
-          <div style={{
-            fontSize: 14, color: '#999999',
-            display: 'flex', lineHeight: 1.4,
-          }}>
-            {shortSum}
+          {/* SUMMARY */}
+          <div
+            style={{
+              marginTop: 24,
+              fontSize: 18,
+              lineHeight: 1.5,
+              color: '#d0d0d0',
+              maxWidth: 690,
+              textShadow: '0 1px 6px rgba(0,0,0,.55)',
+            }}
+          >
+            {shortSummary}
           </div>
 
         </div>
 
       </div>
     ),
-    { width: 1200, height: 630 }
+
+    {
+      width: 1200,
+      height: 630,
+
+      fonts: [
+        {
+          name: 'Roboto',
+          data: await robotoBold,
+          style: 'normal',
+          weight: 700,
+        },
+        {
+          name: 'Roboto',
+          data: await robotoBlack,
+          style: 'normal',
+          weight: 900,
+        },
+      ],
+
+      headers: {
+        'Cache-Control':
+          'public, immutable, no-transform, max-age=86400',
+      },
+    }
   );
 }
