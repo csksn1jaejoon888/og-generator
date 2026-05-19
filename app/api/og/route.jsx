@@ -28,6 +28,8 @@ export async function GET(request) {
     words.slice(0, 20).join(' ') +
     (words.length > 20 ? '...' : '');
 
+  return new ImageResponse(
+
   (
     <div
       style={{
@@ -53,7 +55,7 @@ export async function GET(request) {
           left: 0,
         }}
       />
-
+      
         {/* LOGO */}
         <div
           style={{
