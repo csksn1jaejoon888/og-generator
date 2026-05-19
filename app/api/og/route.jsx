@@ -45,16 +45,10 @@ export async function GET(request) {
       }}
     >
 
-      <img
-  src={new URL('./bg.png', import.meta.url).toString()}
-  width="1200"
-  height="630"
-  style={{
-    position: 'absolute',
-    top: 0,
-    left: 0,
-  }}
-/>
+
+
+
+      
       
         {/* LOGO */}
         <div
