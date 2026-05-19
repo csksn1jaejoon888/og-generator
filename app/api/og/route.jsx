@@ -2,7 +2,7 @@ import { ImageResponse } from '@vercel/og';
 
 export const runtime = 'edge';
 
-// LOAD FONT
+// FONT
 const roboto = fetch(
   new URL('./RobotoCondensed.ttf', import.meta.url)
 ).then((res) => res.arrayBuffer());
@@ -11,10 +11,13 @@ export async function GET(request) {
 
   const { searchParams } = new URL(request.url);
 
-  const title   = searchParams.get('title')   || 'Trend4GenZ';
+  const title   = searchParams.get('title') || 'Trend4GenZ';
   const summary = searchParams.get('summary') || 'Streaming Video Trending';
-  const tagsRaw = searchParams.get('tags')    || '';
-  const tags    = tagsRaw ? tagsRaw.split(',').slice(0, 5) : [];
+  const tagsRaw = searchParams.get('tags') || '';
+
+  const tags = tagsRaw
+    ? tagsRaw.split(',').slice(0, 5)
+    : [];
 
   // CACHE BUSTING
   const v = searchParams.get('v') || Date.now();
@@ -59,35 +62,14 @@ export async function GET(request) {
           height: '630px',
           display: 'flex',
           flexDirection: 'column',
-          background: '#111',
+          background:
+            'linear-gradient(135deg, #1a1a1a 0%, #222222 60%, #2a2a2a 100%)',
           border: '4px solid #98FB98',
           fontFamily: 'Roboto',
           position: 'relative',
           overflow: 'hidden',
         }}
       >
-
-        {/* BACKGROUND */}
-        <img
-          src={`https://raw.githubusercontent.com/JERRY-SUTANDI/og-generator/main/app/api/og/bg.png?v=${v}`}
-          width="1200"
-          height="630"
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            objectFit: 'cover',
-          }}
-        />
-
-        {/* DARK OVERLAY */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'rgba(0,0,0,.45)',
-          }}
-        />
 
         {/* INNER CARD */}
         <div
@@ -97,15 +79,14 @@ export async function GET(request) {
             left: 55,
             width: 1090,
             height: 500,
-            background: 'rgba(20,20,20,.72)',
-            border: '1px solid rgba(255,255,255,.08)',
+            background: '#1e1e1e',
+            border: '1px solid #2e2e2e',
             borderRadius: 8,
             display: 'flex',
-            backdropFilter: 'blur(2px)',
           }}
         />
 
-        {/* TOP GREEN LINE */}
+        {/* TOP LINE */}
         <div
           style={{
             position: 'absolute',
@@ -117,11 +98,11 @@ export async function GET(request) {
           }}
         />
 
-        {/* LOGO TITLE */}
+        {/* LOGO */}
         <div
           style={{
             position: 'absolute',
-            top: 78,
+            top: 80,
             width: '100%',
             display: 'flex',
             justifyContent: 'center',
@@ -154,10 +135,9 @@ export async function GET(request) {
             left: 90,
             fontSize: 34,
             fontWeight: 900,
-            color: '#ffffff',
+            color: '#f0f0f0',
             maxWidth: 920,
             lineHeight: 1.2,
-            textShadow: '0 2px 12px rgba(0,0,0,.7)',
           }}
         >
           {line1}
@@ -173,10 +153,9 @@ export async function GET(request) {
               left: 90,
               fontSize: 34,
               fontWeight: 900,
-              color: '#ffffff',
+              color: '#f0f0f0',
               maxWidth: 920,
               lineHeight: 1.2,
-              textShadow: '0 2px 12px rgba(0,0,0,.7)',
             }}
           >
             {line2}
@@ -203,12 +182,12 @@ export async function GET(request) {
               style={{
                 border: '1px solid #98FB98',
                 borderRadius: 999,
-                padding: '6px 15px',
+                padding: '5px 14px',
                 fontSize: 12,
                 fontWeight: 700,
                 color: '#98FB98',
                 display: 'flex',
-                background: 'rgba(0,0,0,.35)',
+                background: 'rgba(0,0,0,.25)',
               }}
             >
               {tag.trim().toUpperCase()}
@@ -222,20 +201,19 @@ export async function GET(request) {
         <div
           style={{
             position: 'absolute',
-            top: line2 ? 365 : 315,
+            top: line2 ? 360 : 310,
             left: 90,
             fontSize: 18,
             fontWeight: 500,
-            color: '#d0d0d0',
+            color: '#b0b0b0',
             maxWidth: 760,
             lineHeight: 1.5,
-            textShadow: '0 1px 8px rgba(0,0,0,.7)',
           }}
         >
           {shortSum}
         </div>
 
-        {/* WATCH BUTTON */}
+        {/* BUTTON */}
         <div
           style={{
             position: 'absolute',
@@ -251,7 +229,6 @@ export async function GET(request) {
             fontWeight: 700,
             color: '#98FB98',
             letterSpacing: 1,
-            background: 'rgba(0,0,0,.4)',
           }}
         >
           ▶ WATCH NOW
@@ -265,13 +242,14 @@ export async function GET(request) {
             left: 0,
             width: '100%',
             height: 62,
-            background: 'rgba(10,10,10,.92)',
+            background: '#111',
             borderTop: '2px solid #98FB98',
             display: 'flex',
             alignItems: 'center',
             paddingLeft: 40,
           }}
         >
+
           <div
             style={{
               display: 'flex',
@@ -300,6 +278,7 @@ export async function GET(request) {
             </span>
 
           </div>
+
         </div>
 
       </div>
