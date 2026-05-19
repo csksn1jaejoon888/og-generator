@@ -1,205 +1,287 @@
-import { ImageResponse } from '@vercel/og'
+import { ImageResponse } from '@vercel/og';
 
-export const runtime = 'edge'
+export const runtime = 'edge';
 
-export async function GET(req) {
+export async function GET(request) {
 
-  try {
+  const { searchParams } = new URL(request.url);
 
-    const { searchParams } = new URL(req.url)
+  const title   = searchParams.get('title')   || 'Trend4GenZ';
+  const summary = searchParams.get('summary') || 'Streaming Video Trending';
+  const tagsRaw = searchParams.get('tags')    || '';
+  const tags    = tagsRaw ? tagsRaw.split(',').slice(0, 5) : [];
 
-    const title =
-      searchParams.get('title') || 'TREND4GENZ'
+  // Cache busting support
+  const v = searchParams.get('v') || Date.now();
 
-    const summary =
-      searchParams.get('summary') ||
-      'Streaming trending video'
+  // Potong summary max 20 kata
+  const words = summary
+    .replace(/<[^>]*>/g, '')
+    .split(/\s+/);
 
-    const tagsRaw =
-      searchParams.get('tags') || ''
+  const shortSum =
+    words.slice(0, 20).join(' ') +
+    (words.length > 20 ? '...' : '');
 
-    const tags = tagsRaw
-      ? tagsRaw.split(',').slice(0, 4)
-      : []
+  // Split title 2 line
+  const titleWords = title.split(' ');
 
-    // SHORT SUMMARY
-    const words = summary
-      .replace(/<[^>]*>/g, '')
-      .split(/\s+/)
+  let line1 = '';
+  let line2 = '';
 
-    const shortSummary =
-      words.slice(0, 20).join(' ') +
-      (words.length > 20 ? '...' : '')
+  for (const w of titleWords) {
 
-    // TITLE SPLIT
-    const titleWords = title.split(' ')
+    if ((line1 + ' ' + w).trim().length <= 52) {
 
-    let line1 = ''
-    let line2 = ''
+      line1 = (line1 + ' ' + w).trim();
 
-    for (const word of titleWords) {
+    } else if ((line2 + ' ' + w).trim().length <= 52) {
 
-      if ((line1 + ' ' + word).length <= 34) {
+      line2 = (line2 + ' ' + w).trim();
 
-        line1 += ` ${word}`
+    } else {
 
-      } else {
-
-        line2 += ` ${word}`
-      }
+      break;
     }
+  }
 
-    // LOAD FONT
-    const fontData = await fetch(
-      new URL('./RobotoCondensed.ttf', import.meta.url)
-    ).then((res) => res.arrayBuffer())
+  return new ImageResponse(
 
-    // LOAD BG
-    const bg = new URL('./bg.png', import.meta.url).toString()
+    (
+      <div
+        style={{
+          width: '1200px',
+          height: '630px',
+          display: 'flex',
+          flexDirection: 'column',
+          background:
+            'linear-gradient(135deg, #1a1a1a 0%, #222222 60%, #2a2a2a 100%)',
+          border: '4px solid #98FB98',
+          fontFamily: 'sans-serif',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
 
-    return new ImageResponse(
-
-      (
+        {/* Inner card */}
         <div
           style={{
-            width: '1200px',
-            height: '630px',
-            position: 'relative',
+            position: 'absolute',
+            top: 45,
+            left: 55,
+            width: 1090,
+            height: 500,
+            background: '#1e1e1e',
+            border: '1px solid #2e2e2e',
+            borderRadius: 8,
             display: 'flex',
-            overflow: 'hidden',
-            backgroundColor: '#000',
-            fontFamily: 'Roboto',
+          }}
+        />
+
+        {/* Top green accent */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 45,
+            left: 55,
+            width: 1090,
+            height: 4,
+            background: '#98FB98',
+          }}
+        />
+
+        {/* TREND4GENZ title */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 80,
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            fontSize: 52,
+            fontWeight: 900,
+            color: '#98FB98',
+            letterSpacing: 8,
           }}
         >
+          TREND4GENZ
+        </div>
 
-          {/* BACKGROUND */}
-          <img
-            src={bg}
-            width="1200"
-            height="630"
-            style={{
-              position: 'absolute',
-              inset: 0,
-              objectFit: 'cover',
-            }}
-          />
+        {/* Underline */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 148,
+            left: 420,
+            width: 360,
+            height: 3,
+            background: '#98FB98',
+          }}
+        />
 
-          {/* CONTENT */}
+        {/* Video title line 1 */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 190,
+            left: 90,
+            fontSize: 32,
+            fontWeight: 800,
+            color: '#f0f0f0',
+            maxWidth: 920,
+            lineHeight: 1.2,
+          }}
+        >
+          {line1}
+        </div>
+
+        {/* Video title line 2 */}
+        {line2 ? (
           <div
             style={{
               position: 'absolute',
-              left: 220,
               top: 230,
-              width: 720,
+              left: 90,
+              fontSize: 32,
+              fontWeight: 800,
+              color: '#f0f0f0',
+              maxWidth: 920,
+              lineHeight: 1.2,
+            }}
+          >
+            {line2}
+          </div>
+        ) : null}
+
+        {/* Tag pills */}
+        <div
+          style={{
+            position: 'absolute',
+            top: line2 ? 295 : 255,
+            left: 90,
+            display: 'flex',
+            gap: 10,
+            flexWrap: 'wrap',
+          }}
+        >
+
+          {tags.map((tag, i) => (
+
+            <div
+              key={i}
+              style={{
+                border: '1px solid #98FB98',
+                borderRadius: 999,
+                padding: '5px 14px',
+                fontSize: 12,
+                fontWeight: 700,
+                color: '#98FB98',
+                display: 'flex',
+                background: 'rgba(0,0,0,.25)',
+              }}
+            >
+              {tag.trim().toUpperCase()}
+            </div>
+
+          ))}
+
+        </div>
+
+        {/* Summary */}
+        <div
+          style={{
+            position: 'absolute',
+            top: line2 ? 350 : 310,
+            left: 90,
+            fontSize: 17,
+            color: '#a8a8a8',
+            maxWidth: 760,
+            lineHeight: 1.5,
+          }}
+        >
+          {shortSum}
+        </div>
+
+        {/* WATCH NOW button */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 90,
+            right: 75,
+            border: '2px solid #98FB98',
+            borderRadius: 24,
+            padding: '12px 30px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            fontSize: 14,
+            fontWeight: 700,
+            color: '#98FB98',
+            letterSpacing: 1,
+          }}
+        >
+          ▶ WATCH NOW
+        </div>
+
+        {/* Bottom bar */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            width: '100%',
+            height: 62,
+            background: '#111',
+            borderTop: '2px solid #98FB98',
+            display: 'flex',
+            alignItems: 'center',
+            paddingLeft: 40,
+          }}
+        >
+          <div
+            style={{
               display: 'flex',
               flexDirection: 'column',
             }}
           >
 
-            {/* TITLE */}
-            <div
+            <span
               style={{
-                fontSize: 42,
-                fontWeight: 700,
-                color: '#fff',
-                lineHeight: 1.1,
-                textShadow: '0 2px 8px rgba(0,0,0,.6)',
+                fontSize: 17,
+                fontWeight: 900,
+                color: '#f0f0f0',
+                letterSpacing: 1,
               }}
             >
-              {line1.trim()}
-            </div>
+              TREND4GENZ.FUN
+            </span>
 
-            {line2.trim() && (
-
-              <div
-                style={{
-                  fontSize: 42,
-                  fontWeight: 700,
-                  color: '#fff',
-                  lineHeight: 1.1,
-                  marginTop: 4,
-                  textShadow: '0 2px 8px rgba(0,0,0,.6)',
-                }}
-              >
-                {line2.trim()}
-              </div>
-            )}
-
-            {/* TAGS */}
-            <div
+            <span
               style={{
-                display: 'flex',
-                gap: 10,
-                marginTop: 24,
-                flexWrap: 'wrap',
+                fontSize: 12,
+                color: '#777',
               }}
             >
-
-              {tags.map((tag, i) => (
-
-                <div
-                  key={i}
-                  style={{
-                    border: '1px solid #98FB98',
-                    borderRadius: 999,
-                    padding: '5px 14px',
-                    color: '#98FB98',
-                    fontSize: 13,
-                    fontWeight: 700,
-                    background: 'rgba(0,0,0,.35)',
-                  }}
-                >
-                  {tag.trim().toUpperCase()}
-                </div>
-
-              ))}
-
-            </div>
-
-            {/* SUMMARY */}
-            <div
-              style={{
-                marginTop: 24,
-                fontSize: 18,
-                lineHeight: 1.5,
-                color: '#d0d0d0',
-                maxWidth: 650,
-                textShadow: '0 1px 6px rgba(0,0,0,.6)',
-              }}
-            >
-              {shortSummary}
-            </div>
+              Streaming Video
+            </span>
 
           </div>
-
         </div>
-      ),
 
-      {
-        width: 1200,
-        height: 630,
+      </div>
+    ),
 
-        fonts: [
-          {
-            name: 'Roboto',
-            data: fontData,
-            style: 'normal',
-            weight: 700,
-          },
-        ],
+    {
+      width: 1200,
+      height: 630,
 
-        headers: {
-          'Cache-Control':
-            'public, immutable, no-transform, max-age=86400',
-        },
-      }
-    )
-
-  } catch (e) {
-
-    return new Response(
-      `OG Error: ${e.message}`,
-      { status: 500 }
-    )
-  }
+      headers: {
+        // DEV cache busting
+        'Cache-Control':
+          'no-store, no-cache, must-revalidate, proxy-revalidate',
+        Pragma: 'no-cache',
+        Expires: '0',
+      },
+    }
+  );
 }
