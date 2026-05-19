@@ -2,6 +2,10 @@ import { ImageResponse } from '@vercel/og';
 
 export const runtime = 'edge';
 
+const font = fetch(
+  'https://og-generator-puce.vercel.app/RobotoCondensed.ttf'
+).then((res) => res.arrayBuffer());
+
 export async function GET(request) {
 
   const { searchParams } = new URL(request.url);
@@ -41,7 +45,7 @@ export async function GET(request) {
         position: 'relative',
         color: '#fff',
         padding: '60px',
-        fontFamily: 'sans-serif',
+        fontFamily: 'RobotoCondensed',
       }}
     >
 <img
@@ -153,8 +157,17 @@ export async function GET(request) {
     ),
 
     {
-      width: 1200,
-      height: 630,
-    }
+  width: 1200,
+  height: 630,
+
+  fonts: [
+    {
+      name: 'RobotoCondensed',
+      data: await font,
+      style: 'normal',
+      weight: 700,
+    },
+  ],
+}
   );
 }
