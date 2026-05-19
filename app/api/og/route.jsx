@@ -46,15 +46,15 @@ export async function GET(request) {
     >
 
       <img
-        src="https://raw.githubusercontent.com/csksn1jaejoon888/og-generator/main/app/api/og/bg.png"
-        width="1200"
-        height="630"
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-        }}
-      />
+  src={new URL('./bg.png', import.meta.url).toString()}
+  width="1200"
+  height="630"
+  style={{
+    position: 'absolute',
+    top: 0,
+    left: 0,
+  }}
+/>
       
         {/* LOGO */}
         <div
