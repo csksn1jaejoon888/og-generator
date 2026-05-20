@@ -14,8 +14,8 @@ export async function GET(request) {
   const tags    = tagsRaw ? tagsRaw.split(',').slice(0, 5) : [];
 
   const words = summary.replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean);
-  const shortSummary = words.slice(0, 20).join(' ') + (words.length > 20 ? '...' : '');
-  const hasMore = words.length > 20;
+  const isCut = words.length > 20;
+  const shortSummary = words.slice(0, 20).join(' ');
 
   const fontData = await font;
 
@@ -46,7 +46,7 @@ export async function GET(request) {
           top: 100,
           left: BOX_LEFT,
           width: BOX_W,
-          minHeight: 350,
+          minHeight: 420,
           border: '1.5px solid #98FB98',
           borderTop: '3px solid #98FB98',
           borderRadius: 10,
@@ -88,7 +88,7 @@ export async function GET(request) {
             marginBottom: 18,
           }}>
             <span style={{
-              fontSize: 10, color: '#ffffff',
+              fontSize: 10, color: '#777',
               letterSpacing: 2, marginRight: 2,
               display: 'flex',
             }}>TAG :</span>
@@ -106,7 +106,7 @@ export async function GET(request) {
             ))}
           </div>
 
-          {/* SUMMARY */}
+          {/* SUMMARY + tanda lanjutan */}
           <div style={{
             fontSize: 15,
             color: '#cccccc',
@@ -114,8 +114,28 @@ export async function GET(request) {
             display: 'flex',
             flexWrap: 'wrap',
             flex: 1,
+            alignItems: 'flex-start',
           }}>
             {shortSummary}
+            {isCut && (
+              <span style={{
+                color: '#cccccc',
+                marginLeft: 0,
+                display: 'flex',
+                alignItems: 'center',
+              }}>
+                ...
+                <span style={{
+                  color: '#98FB98',
+                  fontWeight: 800,
+                  fontSize: 16,
+                  marginLeft: 4,
+                  display: 'flex',
+                }}>
+                  ›
+                </span>
+              </span>
+            )}
           </div>
 
           {/* READ MORE — kanan bawah, selalu tampil */}
