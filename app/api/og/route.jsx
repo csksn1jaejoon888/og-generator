@@ -14,8 +14,8 @@ export async function GET(request) {
   const tags    = tagsRaw ? tagsRaw.split(',').slice(0, 5) : [];
 
   const words = summary.replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean);
-  const isCut = words.length > 20;
-  const shortSummary = words.slice(0, 20).join(' ');
+  const isCut = words.length > 30;
+  const shortSummary = words.slice(0, 30).join(' ');
 
   const fontData = await font;
 
