@@ -34,7 +34,7 @@ export async function GET(request) {
 
         {/* Background — tanpa overlay */}
         <img
-          src="https://og-generator-puce.vercel.app/bg.png"
+          src="https://og-generator-puce.vercel.app/bg.png?v=2"
           width={1200}
           height={630}
           style={{ position: 'absolute', top: 0, left: 0 }}
