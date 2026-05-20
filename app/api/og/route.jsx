@@ -45,7 +45,7 @@ export async function GET(request) {
           position: 'absolute',
           top: 165,
           left: 135,
-          width: 600,
+          width: 635,
           minHeight: 320,
           border: '1.5px solid #98FB98',
           borderTop: '3px solid #98FB98',
