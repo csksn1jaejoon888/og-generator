@@ -59,8 +59,11 @@ export async function GET(request) {
   <meta name="twitter:title" content="${title}"/>
   <meta name="twitter:description" content="${desc}"/>
   <meta name="twitter:image" content="${ogImage}"/>
-  <meta http-equiv="refresh" content="0;url=${pageUrl}"/>
-  <script>window.location.replace("${pageUrl}");<\/script>
+  <script>
+  var ua = navigator.userAgent.toLowerCase();
+  var isBot = ua.includes('facebookexternalhit') || ua.includes('twitterbot') || ua.includes('linkedinbot') || ua.includes('whatsapp') || ua.includes('telegrambot');
+  if (!isBot) window.location.replace("${pageUrl}");
+<\/script>
 </head>
 <body>
   <p>Redirecting... <a href="${pageUrl}">Klik di sini</a></p>
