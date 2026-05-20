@@ -43,7 +43,7 @@ export async function GET(request) {
         {/* Kotak border mint — center horizontal, center vertical */}
         <div style={{
           position: 'absolute',
-          top: 100,
+          top: 80,
           left: BOX_LEFT,
           width: BOX_W,
           minHeight: 320,
