@@ -43,7 +43,7 @@ export async function GET(request) {
         {/* Kotak border mint — center horizontal, center vertical */}
         <div style={{
           position: 'absolute',
-          top: 150,
+          top: 165,
           left: BOX_LEFT,
           width: BOX_W,
           minHeight: 320,
@@ -59,7 +59,7 @@ export async function GET(request) {
 
           {/* JUDUL */}
           <div style={{
-            fontSize: 28,
+            fontSize: 30,
             fontWeight: 800,
             color: '#ffffff',
             lineHeight: 1.3,
@@ -88,7 +88,7 @@ export async function GET(request) {
             marginBottom: 18,
           }}>
             <span style={{
-              fontSize: 10, color: '#777',
+              fontSize: 10, color: '#ffffff',
               letterSpacing: 2, marginRight: 2,
               display: 'flex',
             }}>TAG :</span>
