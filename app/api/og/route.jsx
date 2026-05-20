@@ -48,6 +48,7 @@ export async function GET(request) {
           width: BOX_W,
           minHeight: 420,
           border: '1.5px solid #98FB98',
+          borderTop: '3px solid #98FB98',
           borderRadius: 10,
           background: 'rgba(0,0,0,0.84)',
           padding: '28px 28px 22px 28px',
@@ -55,15 +56,6 @@ export async function GET(request) {
           flexDirection: 'column',
           boxSizing: 'border-box',
         }}>
-
-          {/* Garis gradien atas */}
-          <div style={{
-            position: 'absolute',
-            top: 0, left: 24,
-            width: BOX_W - 48, height: 2,
-            background: 'linear-gradient(90deg, #98FB98 70%, transparent)',
-            display: 'flex',
-          }}/>
 
           {/* JUDUL */}
           <div style={{
