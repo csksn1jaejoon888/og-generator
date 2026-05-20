@@ -13,14 +13,23 @@ export async function GET(request) {
   const tagsRaw = searchParams.get('tags')    || '';
   const tags    = tagsRaw ? tagsRaw.split(',').slice(0, 5) : [];
 
-  // Summary max 20 kata + ...
   const words = summary.replace(/<[^>]*>/g, '').split(/\s+/);
   const shortSummary = words.slice(0, 20).join(' ') + (words.length > 20 ? '...' : '');
   const hasMore = words.length > 20;
 
   const fontData = await font;
 
-  return new ImageResponse(
+  // Hitung tinggi kotak dinamis berdasarkan konten
+  // Judul: ~40px per baris, estimasi 1-2 baris
+  const titleLen = title.length;
+  const titleLines = titleLen <= 45 ? 1 : titleLen <= 90 ? 2 : 3;
+  const titleHeight = titleLines * 38;
+  const boxHeight = 28 + titleHeight + 16 + 1 + 14 + 30 + 16 + 48 + (hasMore ? 30 : 0) + 20;
+  // top posisi agar kotak vertikal center di area konten (65px navbar, 565px bottom bar)
+  const contentArea = 630 - 65 - 65; // 500px
+  const boxTop = 65 + Math.max(20, (contentArea - boxHeight) / 2);
+
+  const response = new ImageResponse(
     (
       <div style={{
         width: 1200, height: 630,
@@ -38,63 +47,60 @@ export async function GET(request) {
           style={{ position: 'absolute', top: 0, left: 0 }}
         />
 
-        {/* Overlay gelap seluruh area agar teks lebih terbaca */}
+        {/* Overlay seluruh area */}
         <div style={{
           position: 'absolute',
           top: 0, left: 0,
           width: 1200, height: 630,
-          background: 'rgba(0,0,0,0.45)',
+          background: 'rgba(0,0,0,0.50)',
           display: 'flex',
         }}/>
 
-        {/* Kotak border mint — tengah vertikal, kiri horizontal */}
+        {/* Kotak konten — vertikal center, kiri */}
         <div style={{
           position: 'absolute',
-          top: 110,
-          left: 60,
-          width: 740,
+          top: boxTop,
+          left: 55,
+          width: 730,
           border: '1.5px solid #98FB98',
           borderRadius: 10,
-          background: 'rgba(0,0,0,0.80)',
-          padding: '26px 30px 20px 30px',
+          background: 'rgba(0,0,0,0.82)',
+          padding: '28px 30px 22px 30px',
           display: 'flex',
           flexDirection: 'column',
-          gap: 0,
-          boxSizing: 'border-box',
         }}>
 
-          {/* Garis atas hijau tipis */}
+          {/* Garis gradien atas */}
           <div style={{
             position: 'absolute',
-            top: 0, left: 30,
-            width: 680, height: 2,
-            background: 'linear-gradient(90deg, #98FB98, transparent)',
+            top: 0, left: 24,
+            width: 682, height: 2,
+            background: 'linear-gradient(90deg, #98FB98 60%, transparent)',
             display: 'flex',
           }}/>
 
           {/* JUDUL */}
           <div style={{
-            fontSize: 28,
+            fontSize: 30,
             fontWeight: 800,
             color: '#ffffff',
-            lineHeight: 1.3,
-            marginBottom: 16,
+            lineHeight: 1.25,
+            marginBottom: 14,
             display: 'flex',
             flexWrap: 'wrap',
-            maxWidth: 680,
           }}>
             {title}
           </div>
 
-          {/* Divider tipis */}
+          {/* Divider */}
           <div style={{
             width: '100%', height: 1,
-            background: 'rgba(152,251,152,0.2)',
+            background: 'rgba(152,251,152,0.25)',
             marginBottom: 14,
             display: 'flex',
           }}/>
 
-          {/* TAG pills */}
+          {/* TAGS */}
           <div style={{
             display: 'flex',
             flexDirection: 'row',
@@ -104,10 +110,8 @@ export async function GET(request) {
             marginBottom: 16,
           }}>
             <span style={{
-              fontSize: 10,
-              color: '#888',
-              letterSpacing: 2,
-              marginRight: 4,
+              fontSize: 10, color: '#777',
+              letterSpacing: 2, marginRight: 2,
               display: 'flex',
             }}>TAG :</span>
             {tags.map((tag, i) => (
@@ -126,12 +130,11 @@ export async function GET(request) {
 
           {/* SUMMARY */}
           <div style={{
-            fontSize: 14,
+            fontSize: 15,
             color: '#cccccc',
-            lineHeight: 1.6,
+            lineHeight: 1.55,
             display: 'flex',
             flexWrap: 'wrap',
-            marginBottom: hasMore ? 10 : 0,
           }}>
             {shortSummary}
           </div>
@@ -141,18 +144,16 @@ export async function GET(request) {
             <div style={{
               display: 'flex',
               justifyContent: 'flex-end',
-              marginTop: 6,
+              marginTop: 12,
             }}>
               <span style={{
                 fontSize: 12,
                 color: '#98FB98',
                 fontWeight: 700,
-                letterSpacing: 0.5,
                 display: 'flex',
                 alignItems: 'center',
                 gap: 4,
-                borderBottom: '1px solid rgba(152,251,152,0.4)',
-                paddingBottom: 1,
+                opacity: 0.9,
               }}>
                 Read more →
               </span>
@@ -172,6 +173,17 @@ export async function GET(request) {
         style: 'normal',
         weight: 700,
       }],
+      headers: {
+        'Cache-Control': 'no-store, max-age=0',
+        'Pragma': 'no-cache',
+      },
     }
   );
+
+  // Tambah header no-cache pada response
+  response.headers.set('Cache-Control', 'no-store, max-age=0');
+  response.headers.set('Pragma', 'no-cache');
+  response.headers.set('Surrogate-Control', 'no-store');
+
+  return response;
 }
