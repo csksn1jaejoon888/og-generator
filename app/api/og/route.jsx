@@ -44,8 +44,8 @@ export async function GET(request) {
         <div style={{
           position: 'absolute',
           top: 165,
-          left: 150,
-          width: BOX_W,
+          left: 135,
+          width: 600,
           minHeight: 320,
           border: '1.5px solid #98FB98',
           borderTop: '3px solid #98FB98',
