@@ -46,7 +46,7 @@ export async function GET(request) {
           top: 100,
           left: BOX_LEFT,
           width: BOX_W,
-          minHeight: 420,
+          minHeight: 320,
           border: '1.5px solid #98FB98',
           borderTop: '3px solid #98FB98',
           borderRadius: 10,
