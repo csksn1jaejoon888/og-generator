@@ -7,167 +7,119 @@ const font = fetch(
 ).then((res) => res.arrayBuffer());
 
 export async function GET(request) {
-
   const { searchParams } = new URL(request.url);
+  const title   = searchParams.get('title')   || 'Trend4GenZ';
+  const summary = searchParams.get('summary') || 'Streaming Video Trending';
+  const tagsRaw = searchParams.get('tags')    || '';
+  const tags    = tagsRaw ? tagsRaw.split(',').slice(0, 5) : [];
 
-  const title =
-    searchParams.get('title') || 'TREND4GENZ';
+  // Summary max 20 kata
+  const words = summary.replace(/<[^>]*>/g, '').split(/\s+/);
+  const shortSummary = words.slice(0, 20).join(' ') + (words.length > 20 ? '...' : '');
 
-  const summary =
-    searchParams.get('summary') || 'Streaming Video Trending';
-
-  const tagsRaw =
-    searchParams.get('tags') || '';
-
-  const tags = tagsRaw
-    ? tagsRaw.split(',').slice(0, 4)
-    : [];
-
-  // SUMMARY LIMIT
-  const words = summary
-    .replace(/<[^>]*>/g, '')
-    .split(/\s+/);
-
-  const shortSummary =
-    words.slice(0, 20).join(' ') +
-    (words.length > 20 ? '...' : '');
+  const fontData = await font;
 
   return new ImageResponse(
-
-  (
-    <div
-      style={{
-        width: '1200px',
-        height: '630px',
-        background: '#111',
+    (
+      <div style={{
+        width: 1200, height: 630,
         display: 'flex',
-        flexDirection: 'column',
         position: 'relative',
-        color: '#fff',
-        padding: '60px',
         fontFamily: 'RobotoCondensed',
-      }}
-    >
-<img
-  src="https://og-generator-puce.vercel.app/bg.png"
-  width="1200"
-  height="630"
-  style={{
-    position: 'absolute',
-    top: 0,
-    left: 0,
-  }}
-/>
+        overflow: 'hidden',
+      }}>
 
-        {/* LOGO */}
-        <div
-          style={{
-            color: '#98FB98',
-            fontSize: 52,
-            fontWeight: 900,
-            letterSpacing: 6,
-          }}
-        >
-          TREND4GENZ
-        </div>
-
-        {/* LINE */}
-        <div
-          style={{
-            width: 260,
-            height: 4,
-            background: '#98FB98',
-            marginTop: 10,
-            marginBottom: 40,
-          }}
+        {/* Background statis dari public folder */}
+        <img
+          src="https://og-generator-puce.vercel.app/bg.png"
+          width={1200}
+          height={630}
+          style={{ position: 'absolute', top: 0, left: 0 }}
         />
 
-        {/* TITLE */}
-        <div
-          style={{
-            fontSize: 42,
+        {/* Kotak teks dengan border mint — posisi kiri tengah */}
+        <div style={{
+          position: 'absolute',
+          top: 155,
+          left: 75,
+          width: 680,
+          minHeight: 350,
+          border: '1.5px solid #98FB98',
+          borderRadius: 8,
+          background: 'rgba(0,0,0,0.72)',
+          padding: '28px 32px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 0,
+        }}>
+
+          {/* JUDUL — bold besar */}
+          <div style={{
+            fontSize: 30,
             fontWeight: 800,
-            lineHeight: 1.2,
-            maxWidth: 900,
-          }}
-        >
-          {title}
-        </div>
-
-        {/* TAGS */}
-        <div
-          style={{
+            color: '#ffffff',
+            lineHeight: 1.25,
+            marginBottom: 18,
             display: 'flex',
-            gap: 12,
-            marginTop: 30,
             flexWrap: 'wrap',
-          }}
-        >
+          }}>
+            {title}
+          </div>
 
-          {tags.map((tag, i) => (
-
-            <div
-              key={i}
-              style={{
+          {/* TAG pills */}
+          <div style={{
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            gap: 8,
+            marginBottom: 18,
+          }}>
+            <span style={{
+              fontSize: 11,
+              color: '#666',
+              letterSpacing: 2,
+              marginRight: 4,
+              display: 'flex',
+            }}>TAG :</span>
+            {tags.map((tag, i) => (
+              <div key={i} style={{
                 border: '1px solid #98FB98',
-                borderRadius: 20,
-                padding: '6px 14px',
+                borderRadius: 12,
+                padding: '3px 12px',
+                fontSize: 12,
                 color: '#98FB98',
-                fontSize: 14,
-              }}
-            >
-              {tag.trim()}
-            </div>
+                display: 'flex',
+              }}>
+                {tag.trim().toUpperCase()}
+              </div>
+            ))}
+          </div>
 
-          ))}
-
-        </div>
-
-        {/* SUMMARY */}
-        <div
-          style={{
-            marginTop: 35,
-            fontSize: 22,
+          {/* SUMMARY */}
+          <div style={{
+            fontSize: 15,
+            color: '#bbbbbb',
             lineHeight: 1.5,
-            color: '#aaa',
-            maxWidth: 850,
-          }}
-        >
-          {shortSummary}
-        </div>
+            display: 'flex',
+            flexWrap: 'wrap',
+          }}>
+            {shortSummary}
+          </div>
 
-        {/* BUTTON */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 60,
-            right: 60,
-            border: '2px solid #98FB98',
-            borderRadius: 30,
-            padding: '12px 28px',
-            color: '#98FB98',
-            fontSize: 18,
-            fontWeight: 700,
-          }}
-        >
-          ▶ WATCH NOW
         </div>
 
       </div>
     ),
-
     {
-  width: 1200,
-  height: 630,
-
-  fonts: [
-    {
-      name: 'RobotoCondensed',
-      data: await font,
-      style: 'normal',
-      weight: 700,
-    },
-  ],
-}
+      width: 1200,
+      height: 630,
+      fonts: [{
+        name: 'RobotoCondensed',
+        data: fontData,
+        style: 'normal',
+        weight: 700,
+      }],
+    }
   );
 }
