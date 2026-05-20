@@ -14,7 +14,6 @@ export async function GET(request) {
   const tags    = tagsRaw ? tagsRaw.split(',').slice(0, 5) : [];
 
   const words = summary.replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean);
-  const isCut = words.length > 20;
   const shortSummary = words.slice(0, 20).join(' ');
 
   const fontData = await font;
@@ -106,7 +105,7 @@ export async function GET(request) {
             ))}
           </div>
 
-          {/* SUMMARY + tanda lanjutan */}
+          {/* SUMMARY + tanda lanjutan selalu tampil */}
           <div style={{
             fontSize: 15,
             color: '#cccccc',
@@ -117,28 +116,24 @@ export async function GET(request) {
             alignItems: 'flex-start',
           }}>
             {shortSummary}
-            {isCut && (
+            <span style={{
+              color: '#cccccc',
+              marginLeft: 1,
+              display: 'flex',
+              alignItems: 'center',
+            }}>
+              ...
               <span style={{
-                color: '#cccccc',
-                marginLeft: 0,
+                color: '#98FB98',
+                fontWeight: 800,
+                fontSize: 17,
+                marginLeft: 3,
                 display: 'flex',
-                alignItems: 'center',
-              }}>
-                ...
-                <span style={{
-                  color: '#98FB98',
-                  fontWeight: 800,
-                  fontSize: 16,
-                  marginLeft: 4,
-                  display: 'flex',
-                }}>
-                  ›
-                </span>
-              </span>
-            )}
+              }}>›</span>
+            </span>
           </div>
 
-          {/* READ MORE — kanan bawah, selalu tampil */}
+          {/* READ MORE — selalu tampil */}
           <div style={{
             display: 'flex',
             justifyContent: 'flex-end',
