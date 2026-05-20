@@ -3,7 +3,7 @@ import { ImageResponse } from '@vercel/og';
 export const runtime = 'edge';
 
 const font = fetch(
-  'https://og-generator-puce.vercel.app/RobotoCondensed.ttf'
+  'https://og.trend4genz.fun/RobotoCondensed.ttf'
 ).then((res) => res.arrayBuffer());
 
 export async function GET(request) {
@@ -34,7 +34,7 @@ export async function GET(request) {
 
         {/* Background — tanpa overlay */}
         <img
-          src="https://og-generator-puce.vercel.app/bg.png?v=2"
+          src="https://og.trend4genz.fun/bg.png?v=2"
           width={1200}
           height={630}
           style={{ position: 'absolute', top: 0, left: 0 }}
