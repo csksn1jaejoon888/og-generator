@@ -46,7 +46,7 @@ export async function GET(request) {
           top: 100,
           left: BOX_LEFT,
           width: BOX_W,
-          minHeight: 420,
+          minHeight: 350,
           border: '1.5px solid #98FB98',
           borderTop: '3px solid #98FB98',
           borderRadius: 10,
@@ -88,7 +88,7 @@ export async function GET(request) {
             marginBottom: 18,
           }}>
             <span style={{
-              fontSize: 10, color: '#777',
+              fontSize: 10, color: '#ffffff',
               letterSpacing: 2, marginRight: 2,
               display: 'flex',
             }}>TAG :</span>
