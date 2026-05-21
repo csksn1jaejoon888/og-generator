@@ -15,7 +15,7 @@ export async function GET(request) {
 
   const words = summary.replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean);
   const isCut = words.length > 9;
-  const shortSummary = words.slice(0, 9).join(' ');
+  const shortSummary = words.slice(0, 9).join(' ') + (words.length > 9 ? '...' : '');
 
   const fontData = await font;
 
