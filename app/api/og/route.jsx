@@ -34,7 +34,7 @@ export async function GET(request) {
 
         {/* Background — tanpa overlay */}
         <img
-          src="https://og.trend4genz.fun/bg.png?v=2"
+          src="https://og.trend4genz.fun/bg.png?v=3"
           width={1200}
           height={630}
           style={{ position: 'absolute', top: 0, left: 0 }}
